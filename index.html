@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script type="module">
+      import init, { fibonacci } from "./pkg/hello_wasm.js";
+      const ready = init();
+      let count = 1;
+      while (count <= 45) {
+        await ready
+          .then(async () => {
+            await monitor("WASM fibonacci", fibonacci, count);
+          })
+          .then(async () => {
+            await monitor("JS fibonacci", fib, count);
+          });
+        ++count;
+      }
+
+      async function monitor(monitorName, fun, count) {
+        // alert(monitorName + "スタート" + count + "回目");
+        console.time(monitorName + count + "回目");
+        await fun(count);
+        console.timeEnd(monitorName + count + "回目");
+        // alert(monitorName + "終了" + count + "回目");
+      }
+      function fib(n) {
+        return n < 2 ? n : fib(n - 1) + fib(n - 2);
+      }
+    </script>
+  </body>
+</html>
